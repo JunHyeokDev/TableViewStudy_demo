@@ -66,6 +66,8 @@ class MyTableViewCell: UITableViewCell {
     }()
     
     //MARK: - 생성자 셋팅
+    // 코드로만 뷰를 구현한 경우, vawakeFromNib을 사용하지 않기 때문에 생성자를 재정의 해줍시다.
+    // 따라서 super.init() 을 해준 뒤, 뷰를 올려줍니다~!
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         setupStackView()
