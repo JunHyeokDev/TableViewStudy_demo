@@ -4,7 +4,7 @@
 //
 //  Created by 김준혁 on 2023/01/08.
 //
-
+import PhotosUI
 import UIKit
 
 class DetailViewController: UIViewController {
@@ -24,17 +24,42 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
 
         setupButtonAction()
+        setupTapGestures()
         // detailView.member 가 설정이 되어야 업데이트가 되겠구먼~~
         setupData() // ->>> detailView.member = member
     }
     
     private func setupData() {
         detailView.member = member
-
     }
     
     func setupButtonAction() {
         detailView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+    }
+    
+    func setupTapGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpImageView))
+        detailView.mainImageView.addGestureRecognizer(tapGesture)
+        detailView.mainImageView.isUserInteractionEnabled = true
+    }
+    
+    @objc func touchUpImageView() {
+        print("이미지 뷰 터치됨")
+        setupImagePicker()
+    }
+    
+    
+    func setupImagePicker() {
+        
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 0
+        configuration.filter = .any(of: [.images])
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        
+        self.present(picker, animated: true, completion: nil)
+        
     }
     
     @objc func saveButtonTapped() {
@@ -98,3 +123,25 @@ class DetailViewController: UIViewController {
     }
 
 }
+
+extension DetailViewController : PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        
+        let itemProvider = results.first?.itemProvider
+        
+        if let itemProvider = itemProvider, itemProvider.canLoadObject(ofClass: UIImage.self) {
+            itemProvider.loadObject(ofClass: UIImage.self) { (image, error) in
+                DispatchQueue.main.async {
+                    //
+                    self.detailView.mainImageView.image = image as? UIImage // as? 이것도 정리해야할듯
+                }
+            }
+        } else {
+            print("끼에엑")
+        }
+    }
+    
+    
+}
+
