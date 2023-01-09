@@ -243,7 +243,7 @@ class DetailView: UIView {
         super.init(frame: frame)
         backgroundColor = .white
         setupStackView()
-        
+        memberIdTextField.delegate = self
         //setupNotification()
         //setupMemberIdTextField()
     }
@@ -308,4 +308,15 @@ class DetailView: UIView {
         ])
     }
     
+}
+
+
+//
+extension DetailView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == memberIdTextField {
+            return false
+        }
+        return true
+    }
 }

@@ -115,7 +115,14 @@ extension ViewController : UITableViewDelegate {
     // didSelectRowAt -> 몇 번째 셀이 눌렸을 때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 다음 화면으로 넘어가는 코드 구현
+        
+        // 강한순환 참조 발생가능성, ViewController에서 DetailViewController 객체 생성.
         let detailVC = DetailViewController()
+        
+        // DetailViewController에 접근할 수 있는 부분이 이 부분 입니다.
+        // 따라서 델리게이트 설정을 여기에 해줘야 합니다.
+        // 다음 화면으로 넘어가는 부분에 접근해서 델리게이트를 현재 컨트롤러로 설정해줍니다.
+        detailVC.delegate = self
         
         let array = memberListManager.getMembersList()
         detailVC.member = array[indexPath.row]
@@ -123,6 +130,20 @@ extension ViewController : UITableViewDelegate {
         navigationController?.pushViewController(detailVC, animated: true )
         
     }
-    
+            
 }
 
+
+// detailView에서 멤버가 추가되거나 업데이트 되면 무조건 이것을 실행합니다
+
+extension ViewController : MemberDelegate {
+    func addNewMember(_ member: Member) {
+        memberListManager.makeNewMember(member)
+        tableView.reloadData() // 이게 끝임??
+    }
+    
+    func update(index: Int, _ member: Member) {
+        memberListManager.updateMemberInfo(index: index, member)
+        tableView.reloadData()
+    }
+}

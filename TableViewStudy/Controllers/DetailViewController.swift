@@ -12,6 +12,13 @@ class DetailViewController: UIViewController {
     private let detailView = DetailView()
     
     
+    // MemberDelegate 프로토콜을 채택한 것만이 delegate가 될 수 있다.
+    // 해당 프로젝트에서는 ViewController가 이에 해당하므로,
+    // ViewController <-> DetailViewController에서 강한 순환참조가 일어납니다.
+    // 그렇기 때문에 weak을 설정해줘야 합니다.
+    weak var delegate: MemberDelegate?
+    
+    
     var member: Member? //  멤버가 필요합니다. Main View Controller에서 셀을 클릭했을 때 member를 받아
     // 상세 뷰를 표시하기 위함이죠~!
     
@@ -22,7 +29,7 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupButtonAction()
         setupTapGestures()
         // detailView.member 가 설정이 되어야 업데이트가 되겠구먼~~
@@ -107,19 +114,20 @@ class DetailViewController: UIViewController {
             detailView.member = member
             
             // 1) 델리게이트 방식이 아닌 구현⭐️
-            let index = navigationController!.viewControllers.count - 2
+            //let index = navigationController!.viewControllers.count - 2
             // 전 화면에 접근하기 위함
-            let vc = navigationController?.viewControllers[index] as! ViewController
+            //let vc = navigationController?.viewControllers[index] as! ViewController
             // 전 화면의 모델에 접근해서 멤버를 업데이트
-            vc.memberListManager.updateMemberInfo(index: memberId, member!)
+            //vc.memberListManager.updateMemberInfo(index: memberId, member!)
             
             
             // 델리게이트 방식으로 구현⭐️
-            //delegate?.update(index: memberId, member!)
+            delegate?.update(index: memberId, member!)
         
         // (일처리를 다한 후에) 전화면으로 돌아가기
         self.navigationController?.popViewController(animated: true)
         }
+        dismiss(animated: true)
     }
 
 }

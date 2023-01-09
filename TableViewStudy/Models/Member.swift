@@ -8,6 +8,15 @@
 import UIKit
 
 
+// 클래스에서만 채택할 수 있는 프로토콜임을 알리기 위해
+// 
+protocol MemberDelegate : AnyObject {
+    func addNewMember(_ member: Member)
+    func update(index: Int, _ member : Member)
+}
+
+
+
 struct Member {
     
     lazy var memberImage: UIImage? = {
